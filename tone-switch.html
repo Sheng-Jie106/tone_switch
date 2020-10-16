@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <script src="https://unpkg.com/react@15/dist/react.min.js"></script>
+    <script src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/redux@3.7.2/dist/redux.min.js"></script>
+    <title>音階轉換器</title>
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+	<style>
+        #output{
+            font-size: 20px;
+            line-height: 20px;
+            letter-spacing: 2px;
+            padding:20px;
+            margin-top:20px;
+            width: 100%;
+        }
+        div{
+            white-space: pre-wrap;
+            }
+        main{
+            padding:30px;
+        }
+        body{
+            background-color: #fcfcfc;
+            font-size: 18px;
+            font-family: "微軟正黑體";
+        }
+        .container{
+            background-color: white;
+            box-shadow: 0 0 3px grey ;
+        }
+        h1{
+            text-align: center;
+        }
+        .col-md-4{
+            border-right: 1px solid #dddddd;
+            padding:30px;
+        }
+        .col-md-8{
+            padding:30px;
+        }
+        textarea{
+            padding:15px;
+            border-radius: 10px;
+            resize: none;
+        }
+        .navheader{
+            font-size: 25px;
+            color:white;
+        }
+        .navbar{
+            box-shadow: 0 0 3px grey ;
+        }
+        select{
+            margin-bottom: 20px;
+        }
+        button,select,textarea{
+            font-size:17px !important ;
+        }
+        button:active{
+            outline: 0;
+        }
+        .tab-content{
+            border-bottom: 1px solid #dddddd;
+            margin-bottom: 15px;
+            padding:10px;
+        }
+        .nav::after{
+            content:"";
+        }
+    </style>
+</head>
+<body>
+    <script type=text/babel>
+        class  Body extends React.Component{
+            constructor(prop){
+                super(prop);
+            }
+            render(){
+                return <main className={"container"}>
+                    <nav className="navbar bg-primary navbar-fixed-top"><h1 className="navheader">{"音階轉換器"}</h1></nav>
+                    <div className={"row"}>
+                        <div className={"col-md-4 col-sm-12"}>
+                            <ul className='nav nav-tabs'>
+                                <li className="active"><a href="#home" data-toggle="tab" aria-expanded="false">操作方式</a></li>
+                                <li><a href="#profile" data-toggle="tab" aria-expanded="false">小技巧</a></li>
+                                <li><a href="#messages" data-toggle="tab" aria-expanded="true">注意事項</a></li>
+                            </ul>
+                            <div className="tab-content">
+                                <div className='tab-pane active' id="home">
+                                    先將樂譜輸入空格中，選擇要提升的階數，再按下轉換，轉換後的樂譜就會出現在下方，按下複製鍵即可複製轉換後的樂譜
+                                </div>
+                                <div className='tab-pane' id="profile">
+                                    {"1. 如果你想要降2個音，如 : C > La，其實就等於提升5個音，直接選 C > La 就可以囉 ! \n2. 如果你想要轉4個音加一個半音，如 : C > #So，那就可以先轉4個音，再將轉換結果再轉一個半音(可以按貼上輸出)，就完成拉~~"}
+                                </div>
+                                <div className='tab-pane' id="messages">
+                                    {"1. 英文字母譜輸入不分大小寫\n2. 如選擇英文字母譜輸出，輸出內容皆會被轉換為小寫\n3. 對於輸入的內容，只會針對數字簡譜、英文字母譜(不分大小寫)做轉換，其餘皆不會影響，若輸出結果與預期不符，請確認輸入內容是否有相似字樣受轉換\n"}
+                                </div>
+                            </div>
+            				<div className='alert alert-info'>
+            					如果你想要轉換的音階沒有在選單中，可以先看看小技巧
+            				</div>
+                            <div className='alert alert-warning'>
+                                能轉換的格式只有數字簡譜 : 1 #6...、英文字母譜 : do #la...，無法轉換注音譜
+            				</div>
+                            <div className='alert bg-success'>
+                                {"貼上輸出可以將輸出結果貼入輸入框中\n複製按鈕可將輸出結果複製"}
+            				</div>
+                            <div className={"panel-group"} id="accordion" role="tablist" aria-multiselectable="true">
+                                <div className="panel-default panel">
+                                    <div className="panel-heading" role="tab" id="headingOne">
+                                        <h4 className="panel-title">
+                                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">{"音階轉換"}</a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseOne" className="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne" aria-expanded="true">
+                                        <div className="panel-body">{"如果我們聽到一首很喜歡的歌曲，想要演奏他，好不容易找到了歌譜，卻發現歌譜的音調怎麼怪怪的，自己所聽的歌曲不同?\n其實只是音調不同而已，只要轉個調就可以了"}</div>
+                                    </div>
+                                </div>
+                                <div className="panel-default panel">
+                                    <div className="panel-heading" role="tab" id="headingTwo">
+                                        <h4 className="panel-title">
+                                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">{"音階轉換器"}</a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseTwo" className="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo" aria-expanded="false">
+                                        <div className="panel-body">{"以前我都一個音一個音這樣轉，但在大量轉音的過程中出錯，也會耗費大量時間，後來我發現用一套「邏輯」就可以利用文字編輯器(word,txt等...)中的「取代」功能來轉，這樣既快速也不會出錯，但前提是每次邏輯要正確，不然仍舊會出錯。\n既然有了一套邏輯，那何不交給電腦來做，如此就算電腦做再多遍也不會出錯啊 ! !\n所以，音階轉換器就此誕生~~"}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-md-8 col-sm-12">
+                            <Switch/>
+                        </div>
+                    </div>
+                    <footer>
+                        <p>{"@jason 2020/10/16 \n如有任何問題或異常請聯絡我 : fat097087@gmail.com"}</p>    
+                    </footer>
+                </main>;
+            }
+        }
+        class Switch extends React.Component{
+            constructor(prop){
+                super(prop);
+                this.state={
+                    tones:{
+                    num:["#1","#2","#4","#5","#6","1","2","3","4","5","6","7"],
+                    eng:["#do","#re","#fa","#so","#la","do","re","mi","fa","so","la","si"],
+                    init:["si","#la","la","#so","so","#fa","fa","mi","#re","re","#do","do"],
+                    half:["x","si","#la","la","#so","so","#fa","fa","mi","#re","re","#do"],
+                    index:["2","3","5","6","7","#1","#2","4","#4","#5","#6","1"]
+                    },
+                    output:""
+                };
+                let check;
+            }
+            render(){
+                return <div>
+                        <textarea placeholder="輸入樂譜" id="input" cols="60" rows="20" className="form-control"></textarea><p></p><Button switch={this.switch.bind(this)} reset={this.reset.bind(this)} reverse={this.reverse.bind(this)} copy={this.copy.bind(this)}/>
+                        <div id="output" className='alert alert-warning'>{this.state.output}</div>
+                    </div>;
+            }
+            switch(){
+                let texts=document.getElementById("input").value; //取得輸入樂譜
+                let kinds=[];
+                let i=0;
+                texts=texts.toLowerCase();
+                this.state.tones.num.forEach((n)=>{
+                    texts=texts.replaceAll(n,this.state.tones.eng[i]);
+                    i++;
+                });
+                let tone_up=parseInt($("#select").val());
+                console.log(tone_up);
+                while(tone_up>0){
+                    i=0;
+                    this.state.tones.half.forEach((half)=>{
+                        texts=texts.replaceAll(this.state.tones.init[i],half);
+                        i++;
+                    });
+                    texts=texts.replaceAll("x","do");
+                    tone_up--;
+                }
+                let outtype=parseInt($('input[name="outtype"]:checked').val());
+                i=0;
+                if(outtype===1)
+                    this.state.tones.eng.forEach((eng)=>{
+                        texts=texts.replaceAll(eng,this.state.tones.num[i],);
+                        i++;
+                    });
+                this.setState(()=>{
+                    return {output:texts};
+                });
+                this.check=$('input[name="outtype"]:checked').val();
+                $('input:radio[name="outtype"]').filter('[value='+this.check+']').attr('checked', true);
+            }
+            reset(){
+                $("#input").val("");
+            }
+            reverse(){
+                $("#input").val($("#output").html());
+            }
+            copy(){
+                navigator.clipboard.writeText($("#output").html());
+            }
+        }
+        class Button extends React.Component{
+            constructor(prop){
+                super(prop);
+                this.state={};
+            }
+            render(){
+                return <div>
+                    <select className="form-control" id="select">
+                        <option value="0" hidden>請選擇要升幾度音</option>
+                        <option value="1">半度(C > #C)</option>
+                        <option value="2">1度(C > D)</option>
+                        <option value="4">2度(C > E)</option>
+                        <option value="5">3度(C > F)</option>
+                        <option value="7">4度(C > G)</option>
+                        <option value="9">5度(C > A)</option>
+                        <option value="11">6度(C > B)</option>
+                    </select> 
+                    產出樣式 : <label className="radio-inline"><input type="radio" name="outtype" value="1"/> 數字簡譜</label> 
+                    <label className="radio-inline"><input type="radio" name="outtype" value="0"/> 英文字母譜</label><p></p>
+                    <button onClick={this.props.switch} className="btn btn-success">轉換</button> <button onClick={this.props.reverse} className="btn btn-info">貼上輸出</button> <button onClick={this.props.copy} className="btn btn-default">複製</button> <button onClick={this.props.reset} className="btn btn-warning">清除</button> 
+                </div>;
+            }
+        }
+        window.addEventListener("load",()=>{
+            ReactDOM.render(<Body/>,document.body);
+            $('input:radio[name="outtype"]').filter('[value="1"]').attr('checked', true);
+        });
+    </script>
+    <script type="text/javascript" src=../js/jquery-3.4.1.min.js></script>
+    <script type="text/javascript" src=../js/bootstrap.min.js></script>
+</body>
