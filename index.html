@@ -96,10 +96,10 @@
                                     先將樂譜輸入空格中，選擇要提升的階數，再按下轉換，轉換後的樂譜就會出現在下方，按下複製鍵即可複製轉換後的樂譜
                                 </div>
                                 <div className='tab-pane' id="profile">
-                                    {"1. 如果你想要降2個音，如 : C > La，其實就等於提升5個音，直接選 C > La 就可以囉 ! \n2. 如果你想要轉4個音加一個半音，如 : C > #So，那就可以先轉4個音，再將轉換結果再轉一個半音(可以按貼上輸出)，就完成拉~~"}
+                                    {"1. 如果你想要降2個音，如 : C > La，其實就等於提升5個音，直接選 C > La 就可以囉 ! \n2. 如果你想要降二個半音，如 : B > bSo，則要自己先換算成 C > bLa，然後先選升四個音 C > So，轉換後貼上輸出，再升一個半音，這樣兩個步驟加起來就是 C > #So(#So=bLa) \n3. 如果你想要轉4個音加一個半音，如 : C > #So，那就可以先轉4個音，再將轉換結果再轉一個半音(可以按貼上輸出)，就完成拉~~"}
                                 </div>
                                 <div className='tab-pane' id="messages">
-                                    {"1. 英文字母譜輸入不分大小寫\n2. 如選擇英文字母譜輸出，輸出內容皆會被轉換為小寫\n3. 對於輸入的內容，只會針對數字簡譜、英文字母譜(不分大小寫)做轉換，其餘皆不會影響，若輸出結果與預期不符，請確認輸入內容是否有相似字樣受轉換\n"}
+                                    {"1. 英文字母譜輸入不分大小寫\n2. 輸出內容皆會以#記號表示，如輸入 : b6，升一個音後會輸出 #6(b7=#6)\n3. 對於輸入的內容，只會針對數字簡譜、英文字母譜(不分大小寫)做轉換，其餘皆不會影響，若輸出結果與預期不符，請確認輸入內容是否有相似字樣受轉換\n"}
                                 </div>
                             </div>
             				<div className='alert alert-info'>
@@ -149,11 +149,13 @@
                 super(prop);
                 this.state={
                     tones:{
-                    num:["#1","#2","#4","#5","#6","1","2","3","4","5","6","7"],
-                    eng:["#do","#re","#fa","#so","#la","do","re","mi","fa","so","la","si"],
-                    init:["si","#la","la","#so","so","#fa","fa","mi","#re","re","#do","do"],
-                    half:["x","si","#la","la","#so","so","#fa","fa","mi","#re","re","#do"],
-                    index:["2","3","5","6","7","#1","#2","4","#4","#5","#6","1"]
+                    num:["b2","b3","b5","b6","b7","#1","#2","#4","#5","#6","1","2","3","4","5","6","7"],
+                    eng:["bre","bmi","bso","bla","bsi","#do","#re","#fa","#so","#la","do","re","mi","fa","so","la","si"],
+                    init:["bre","bmi","bso","bla","bsi","si","#la","la","#so","so","#fa","fa","mi","#re","re","#do","do"],
+                    half:["z","y","w","u","j","x","si","#la","la","#so","so","#fa","fa","mi","#re","re","#do"],
+                    index:["re","mi","so","la","si","do"],
+                    final:["si","#la","la","#so","so","#fa","fa","mi","#re","re","#do"],
+                    final_up:["Si","#La","La","#So","So","#Fa","Fa","Mi","#Re","Re","#Do"]
                     },
                     output:""
                 };
@@ -182,16 +184,30 @@
                         texts=texts.replaceAll(this.state.tones.init[i],half);
                         i++;
                     });
-                    texts=texts.replaceAll("x","do");
+                    i=0;
+                    while(i<=5){
+                        texts=texts.replaceAll(this.state.tones.half[i],this.state.tones.index[i]);
+                        i++;
+                    }
                     tone_up--;
                 }
+                console.log(tone_up);
                 let outtype=parseInt($('input[name="outtype"]:checked').val());
-                i=0;
-                if(outtype===1)
+                if(outtype===1){
+                    i=0;
                     this.state.tones.eng.forEach((eng)=>{
                         texts=texts.replaceAll(eng,this.state.tones.num[i],);
                         i++;
                     });
+                }
+                else{
+                    i=0;
+                    texts=texts.toLowerCase();
+                    this.state.tones.final.forEach((final)=>{
+                        texts=texts.replaceAll(final,this.state.tones.final_up[i],);
+                        i++;
+                    });
+                }
                 this.setState(()=>{
                     return {output:texts};
                 });
@@ -237,5 +253,5 @@
         });
     </script>
     <script type="text/javascript" src=https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js></script>
-    <script type="text/javascript" src=https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js></script>
+    <script type="text/javascript" src=https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js></script>
 </body>
